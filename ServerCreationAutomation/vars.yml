@@ -1,0 +1,2 @@
+nginx_package: nginx
+custom_config_file: custom_config.conf

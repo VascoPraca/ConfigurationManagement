@@ -1,6 +1,8 @@
 - name: Provision and configure servers
   hosts: localhost
   become: yes
+  vars_files:
+    - vars.yml
   tasks:
     - name: Ensure the server is up-to-date
       apt:
@@ -9,7 +11,7 @@
 
     - name: Install Nginx
       apt:
-        name: nginx
+        name: "{{nginx_package}}"
         state: present
 
     - name: Start and enable Nginx service
@@ -17,6 +19,14 @@
         name: nginx
         state: started
         enabled: yes
+
+    - name: Use custom configuration
+      copy:
+        src: files/{{custom_config_file}}
+        dest: /etc/nginx/conf.d/{{custom_config.file}}
+        owner: root
+        group: root
+        mode: '0644'
 
     - name: Ensure the firewall allows HTTP traffic
       ufw:
