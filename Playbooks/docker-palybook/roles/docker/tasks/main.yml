@@ -1,0 +1,56 @@
+---
+# Install Docker dependencies
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+# Add Docker's GPG key
+- name: Add Docker's GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+# Set up Docker repository
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+# Update apt cache
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+# Install Docker
+- name: Install Docker
+  apt:
+    name: docker-ce
+    state: yes
+
+# Enable Docker at boot
+- name: Enable Docker at boot
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+# Pull Docker image
+- name: Pull Docker image
+  docker_image:
+  name: "{{ docker_image }}"
+  source: pull
+
+# Run Docker container
+- name: Run Docker container
+  docker_container:
+    name: "{{ docker_container_name }}"
+    image: "{{ docker_image }}"
+    state: started
+    ports:
+      - "80:80"

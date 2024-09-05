@@ -1,0 +1,3 @@
+---
+docker_image: "nginex:latest"
+docker_container_name: "web_app"
